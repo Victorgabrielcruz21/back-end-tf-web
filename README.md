@@ -1,6 +1,6 @@
 # Banco de Dados da Aplicação
 
-![Banco de Dados da Aplicação](Banco_de_dados.png)
+![Banco de Dados da Aplicação](bd/Banco_de_dados.png)
 
 Este site está sendo desenvolvido para otimizar as filas do Refeitório do IFNMG Campus Salinas - MG. Este espaço irá organizar as filas de forma online, visando proporcionar uma melhor qualidade de vida aos estudantes e servidores, resultando em um melhor aproveitamento do tempo de intervalo.
 
