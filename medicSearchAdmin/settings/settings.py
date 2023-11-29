@@ -84,15 +84,15 @@ WSGI_APPLICATION = 'medicSearchAdmin.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-      'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'Bandejao',
-            'USER': 'Victorgabrielcruz',
-            'PASSWORD': '************',
-            'HOST': 'ep-spring-rice-69313704.us-east-2.aws.neon.tech',
-            'PORT': '5432',
-            'OPTIONS': {'sslmode': 'require'},
-    }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'Bandejao',
+        'USER': 'Victorgabrielcruz',
+        'PASSWORD': 'zRWsGCr8J2Ey',
+        'HOST': 'ep-spring-rice-69313704.us-east-2.aws.neon.tech',
+        'PORT': '5432',
+        'OPTIONS': {'sslmode': 'require'},
+  }
 }
 
 
