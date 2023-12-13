@@ -1,10 +1,24 @@
 # Back End Bandejão
 - `https://test3-kndm.onrender.com`
-## Banco de Dados da Aplicação
-
-![Banco de Dados da Aplicação](bd/Banco_de_dados.png)
 
 Este site está sendo desenvolvido para otimizar as filas do Refeitório do IFNMG Campus Salinas - MG. Este espaço irá organizar as filas de forma online, visando proporcionar uma melhor qualidade de vida aos estudantes e servidores, resultando em um melhor aproveitamento do tempo de intervalo.
+
+## Banco de Dados da Aplicação
+
+### Modelo Conceitual
+![Modelo Conceitual](bd/Banco_de_dados_conceitual.png)
+
+### Modelo Lógico
+![Modelo Lógico](bd/Banco_de_dados_logico.png)
+
+### Modelo Físico
+[**Arquivo SQL do modelo físico**](bd/DDL.sql)
+
+---
+#### Descrição
+O banco de dados da plataforma Bandejão foi construído com o auxílio da ferramenta [brModelo](http://www.sis4.com/brModelo/), tendo sua escrita voltada ao banco de dados do tipo Postgree SQL e sendo hospedado na plataforma [Neon Tech](https://neon.tech).
+
+---
 
 ## Lista de usuarios
 
