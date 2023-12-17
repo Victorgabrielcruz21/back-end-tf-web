@@ -1,7 +1,7 @@
 CREATE DATABASE bandejao
 USE bandejao;
 
-CREATE TABLE usuarios (
+CREATE TABLE usuario (
     id SERIAL NOT NULL,
     nome VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
