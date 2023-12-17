@@ -30,6 +30,7 @@ CREATE TABLE fila (
 CREATE TABLE reserva (
     usuario_id INT NOT NULL,
     fila_id INT NOT NULL,
+    posicao INT NOT NULL,
     PRIMARY KEY(usuario_id, fila_id),
     FOREIGN KEY(usuario_id) REFERENCES usuario(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY(fila_id) REFERENCES fila(id) ON UPDATE CASCADE ON DELETE CASCADE
