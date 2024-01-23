@@ -1,6 +1,9 @@
 import json
 from .models import Usuario
 from .models import Admin
+from .models import Fila
+from .models import Cardapio
+from .models.Fila import Position
 
 from django.shortcuts import render
 from rest_framework.response import Response
@@ -122,3 +125,125 @@ def admin(request, admin_id):
 
     except Exception as ex:
       print(f"Erro inesperado: {ex}")
+
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def join_queue(request):
+    if request.method == 'POST':
+        student_id = request.data['student_id']
+        student = get_object_or_404(Usuario, ID=student_id)
+        queue = Fila.objects.first() # Supondo que exista apenas uma fila
+        Position.objects.create(aluno=student, fila=queue, posicao=queue.posicao_set.count())
+        return Response(status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def check_position(request):
+    if request.method == 'GET':
+        student_id = request.query_params['student_id']
+        student = get_object_or_404(Usuario, ID=student_id)
+        position = Position.objects.get(aluno=student).posicao
+        return Response({'position': position}, status=status.HTTP_200_OK)
+
+
+@api_view(['DELETE'])
+@permission_classes([AllowAny])
+def leave_queue(request):
+    if request.method == 'DELETE':
+        student_id = request.data['student_id']
+        student = get_object_or_404(Usuario, ID=student_id)
+        Position.objects.get(aluno=student).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def create_queue(request):
+    if request.method == 'POST':
+        data = request.data
+        queue = Fila.objects.create(nome=data['nome'], data_hora=data['data_hora'], tamanho=data['tamanho'])
+        return Response(status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_queues(request):
+    if request.method == 'GET':
+        queues = Fila.objects.all()
+        return Response(queues, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_queue(request, queue_id):
+    if request.method == 'GET':
+        queue = get_object_or_404(Fila, id=queue_id)
+        return Response(queue, status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+@permission_classes([AllowAny])
+def update_queue(request, queue_id):
+    if request.method == 'PUT':
+        queue = get_object_or_404(Fila, id=queue_id)
+        data = request.data
+        queue.nome = data.get('nome', queue.nome)
+        queue.data_hora = data.get('data_hora', queue.data_hora)
+        queue.tamanho = data.get('tamanho', queue.tamanho)
+        queue.save()
+        return Response(queue, status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+@permission_classes([AllowAny])
+def delete_queue(request, queue_id):
+    if request.method == 'DELETE':
+        queue = get_object_or_404(Fila, id=queue_id)
+        queue.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def create_menu_item(request):
+    if request.method == 'POST':
+        data = request.data
+        Cardapio.objects.create(link=data['link'])
+        return Response(status=status.HTTP_201_CREATED)
+
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_menu_items(request):
+    if request.method == 'GET':
+        menu_items = Cardapio.objects.all()
+        return Response(menu_items, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_menu_item(request, menu_item_id):
+    if request.method == 'GET':
+        menu_item = get_object_or_404(Cardapio, id=menu_item_id)
+        return Response(menu_item, status=status.HTTP_200_OK)
+    
+@api_view(['PUT'])
+@permission_classes([AllowAny])
+def update_menu_item(request, menu_item_id):
+    if request.method == 'PUT':
+        menu_item = get_object_or_404(Cardapio, id=menu_item_id)
+        data = request.data
+        menu_item.link = data.get('link', menu_item.link)
+        menu_item.save()
+        return Response(menu_item, status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+@permission_classes([AllowAny])
+def delete_menu_item(request, menu_item_id):
+    if request.method == 'DELETE':
+        menu_item = get_object_or_404(Cardapio, id=menu_item_id)
+        menu_item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
