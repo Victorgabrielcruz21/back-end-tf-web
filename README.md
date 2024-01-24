@@ -95,3 +95,121 @@ O banco de dados da plataforma Bandejão foi construído com o auxílio da ferra
    "Senha": "senha",
    "Nome": "nome"
 }
+## Queue Management
+
+### Joining the Queue
+
+- **Method:** POST
+- **Permissions:** Allows any user to access.
+- **Description:** Adds a student to the queue.
+- **Endpoint:** `https://test3-kndm.onrender.com/fila/join`
+- **Body:** {
+   "student_id": "<student_id>"
+}
+
+### Verificando a Posição na Fila
+
+- **Método:** GET
+- **Permissões:** Permite a qualquer usuário acessar.
+- **Descrição:** Retorna a posição de um aluno na fila.
+- **Endpoint:** `https://test3-kndm.onrender.com/fila/position`
+- **Parâmetros de Consulta:** `student_id=<student_id>`
+
+### Saindo da Fila
+
+- **Método:** DELETE
+- **Permissões:** Permite a qualquer usuário acessar.
+- **Descrição:** Remove um aluno da fila.
+- **Endpoint:** `https://test3-kndm.onrender.com/fila/leave`
+- **Corpo:** {
+   "student_id": "<student_id>"
+}
+
+### Criando uma Fila
+
+- **Método:** POST
+- **Permissões:** Permite a qualquer usuário acessar.
+- **Descrição:** Cria uma nova fila.
+- **Endpoint:** `https://test3-kndm.onrender.com/fila/`
+- **Corpo:** 
+{
+   "nome": "<nome>",
+   "data_hora": "<data_hora>",
+   "tamanho": "<tamanho>"
+}
+
+### Obtendo Todas as Filas
+
+- **Método:** GET
+- **Permissões:** Permite a qualquer usuário acessar.
+- **Descrição:** Retorna todas as filas.
+- **Endpoint:** `https://test3-kndm.onrender.com/fila/`
+
+### Obtendo uma Fila Específica
+
+- **Método:** GET
+- **Permissões:** Permite a qualquer usuário acessar.
+- **Descrição:** Retorna uma fila específica.
+- **Endpoint:** `https://test3-kndm.onrender.com/fila/<int:queue_id>/`
+
+### Atualizando uma Fila
+
+- **Método:** PUT
+- **Permissões:** Permite a qualquer usuário acessar.
+- **Descrição:** Atualiza uma fila específica.
+- **Endpoint:** `https://test3-kndm.onrender.com/fila/<int:queue_id>/`
+- **Corpo:** 
+{
+   "nome": "<novo_nome>",
+   "data_hora": "<nova_data_hora>",
+   "tamanho": "<novo_tamanho>"
+}
+### Excluindo uma Fila
+
+- **Método:** DELETE
+- **Permissões:** Permite a qualquer usuário acessar.
+- **Descrição:** Exclui uma fila específica.
+- **Endpoint:** `https://test3-kndm.onrender.com/fila/<int:queue_id>/`
+
+## Gerenciamento de Menu
+
+### Criando um Item de Menu
+
+- **Método:** POST
+- **Permissões:** Permite a qualquer usuário acessar.
+- **Descrição:** Cria um novo item de menu.
+- **Endpoint:** `https://test3-kndm.onrender.com/cardapio/`
+- **Corpo:** 
+{
+   "link": "<link>"
+}
+### Obtendo Todos os Itens de Menu
+
+- **Método:** GET
+- **Permissões:** Permite a qualquer usuário acessar.
+- **Descrição:** Retorna todos os itens de menu.
+- **Endpoint:** `https://test3-kndm.onrender.com/cardapio/`
+
+### Obtendo um Item de Menu Específico
+
+- **Método:** GET
+- **Permissões:** Permite a qualquer usuário acessar.
+- **Descrição:** Retorna um item de menu específico.
+- **Endpoint:** `https://test3-kndm.onrender.com/cardapio/<int:menu_item_id>/`
+
+### Atualizando um Item de Menu
+
+- **Método:** PUT
+- **Permissões:** Permite a qualquer usuário acessar.
+- **Descrição:** Atualiza um item de menu específico.
+- **Endpoint:** `https://test3-kndm.onrender.com/cardapio/<int:menu_item_id>/`
+- **Corpo:** 
+{
+   "link": "<novo_link>"
+}
+### Excluindo um Item de Menu
+
+- **Método:** DELETE
+- **Permissões:** Permite a qualquer usuário acessar.
+- **Descrição:** Exclui um item de menu específico.
+- **Endpoint:** `https://test3-kndm.onrender.com/cardapio/<int:menu_item_id>/`
