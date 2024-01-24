@@ -1,16 +1,19 @@
 import json
 from .models import Usuario
 from .models import Admin
-from .models import Fila
+from .models.Fila import Fila
 from .models import Cardapio
 from .models.Fila import Position
 
+from datetime import datetime
+from rest_framework import status
+from rest_framework.response import Response
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from .models import Usuario, Admin
-from .serializers import UsuarioSerializer, AdminSerializer
+from .serializers import UsuarioSerializer, AdminSerializer, FilaSerializer, CardapioSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework import viewsets
 from .serializers import UsuarioSerializer
@@ -20,8 +23,6 @@ from django.shortcuts import get_object_or_404 , redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def usuario_list(request):
@@ -29,7 +30,6 @@ def usuario_list(request):
       usuarios = Usuario.objects.all()
       serializer = UsuarioSerializer(usuarios, many=True)
       return Response(serializer.data)
-
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -40,7 +40,6 @@ def usuario_add(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([AllowAny])
@@ -73,7 +72,6 @@ def usuario(request, user_id):
       usuario.delete()
     except Exception as ex:
       print(f"Erro inesperado: {ex}")
-
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -126,6 +124,111 @@ def admin(request, admin_id):
     except Exception as ex:
       print(f"Erro inesperado: {ex}")
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def create_queue(request):
+    if request.method == 'POST':
+        serializer = FilaSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_queues(request):
+    if request.method == 'GET':
+      queues = Fila.objects.all()
+      serializer = FilaSerializer(queues, many=True)
+      return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_queue(request, queue_id):
+    if request.method == 'GET':
+      try:
+        queue = Fila.objects.get(id=queue_id)
+        serializer = FilaSerializer(queue, many=False)
+        return Response(serializer.data)
+      except Fila.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+        
+@api_view(['PUT'])
+@permission_classes([AllowAny])
+def update_queue(request, queue_id):
+    if request.method == 'PUT':
+      try: 
+        queue = get_object_or_404(Fila, id=queue_id)
+        data = json.loads(request.body)
+        queue.nome = data.get('nome', queue.nome)
+        queue.tamanho = data.get('tamanho', queue.tamanho)
+        queue.save()
+        serializer = FilaSerializer(queue, many=False)
+        return Response(serializer.data)
+      except Exception as ex:
+        print(f"Erro inesperado: {ex}")
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([AllowAny])
+def delete_queue(request, queue_id):
+    if request.method == 'DELETE':
+        queue = get_object_or_404(Fila, id=queue_id)
+        queue.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)  
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def create_menu_item(request):
+    if request.method == 'POST':
+      serializer = CardapioSerializer(data=request.data)
+      if serializer.is_valid():
+          serializer.save()
+          return Response(serializer.data, status=status.HTTP_201_CREATED)
+      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_menu_items(request):
+    if request.method == 'GET':
+        cardapio = Cardapio.objects.all()
+        serializer = CardapioSerializer(cardapio, many=True)
+        return Response(serializer.data)
+    
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_menu_item(request, cardapio_id):
+    if request.method == 'GET':
+        try:
+           
+          cardapio = Cardapio.objects.get(id=cardapio_id)
+          serializer = CardapioSerializer(cardapio, many=False)
+          return Response(serializer.data)
+        except Fila.DoesNotExist:
+          return Response(status=status.HTTP_404_NOT_FOUND)
+  
+@api_view(['PUT'])
+@permission_classes([AllowAny])
+def update_menu_item(request, menu_item_id):
+    if request.method == 'PUT':
+        try:           
+          menu_item = get_object_or_404(Cardapio, id=menu_item_id)
+          data = json.loads(request.body)
+          menu_item.link = data.get('link', menu_item.link)
+          menu_item.save()
+          serializer = CardapioSerializer(menu_item, many=False)
+          return Response(serializer.data)
+        except Exception as ex:
+          print(f"Erro inesperado: {ex}")
+          return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([AllowAny])
+def delete_cardapio(request, menu_item_id):
+    if request.method == 'DELETE':
+        menu_item = get_object_or_404(Cardapio, id=menu_item_id)
+        menu_item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['POST'])
@@ -156,94 +259,6 @@ def leave_queue(request):
         student_id = request.data['student_id']
         student = get_object_or_404(Usuario, ID=student_id)
         Position.objects.get(aluno=student).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def create_queue(request):
-    if request.method == 'POST':
-        data = request.data
-        queue = Fila.objects.create(nome=data['nome'], data_hora=data['data_hora'], tamanho=data['tamanho'])
-        return Response(status=status.HTTP_201_CREATED)
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def get_queues(request):
-    if request.method == 'GET':
-        queues = Fila.objects.all()
-        return Response(queues, status=status.HTTP_200_OK)
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def get_queue(request, queue_id):
-    if request.method == 'GET':
-        queue = get_object_or_404(Fila, id=queue_id)
-        return Response(queue, status=status.HTTP_200_OK)
-
-@api_view(['PUT'])
-@permission_classes([AllowAny])
-def update_queue(request, queue_id):
-    if request.method == 'PUT':
-        queue = get_object_or_404(Fila, id=queue_id)
-        data = request.data
-        queue.nome = data.get('nome', queue.nome)
-        queue.data_hora = data.get('data_hora', queue.data_hora)
-        queue.tamanho = data.get('tamanho', queue.tamanho)
-        queue.save()
-        return Response(queue, status=status.HTTP_200_OK)
-
-@api_view(['DELETE'])
-@permission_classes([AllowAny])
-def delete_queue(request, queue_id):
-    if request.method == 'DELETE':
-        queue = get_object_or_404(Fila, id=queue_id)
-        queue.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def create_menu_item(request):
-    if request.method == 'POST':
-        data = request.data
-        Cardapio.objects.create(link=data['link'])
-        return Response(status=status.HTTP_201_CREATED)
-
-
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def get_menu_items(request):
-    if request.method == 'GET':
-        menu_items = Cardapio.objects.all()
-        return Response(menu_items, status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def get_menu_item(request, menu_item_id):
-    if request.method == 'GET':
-        menu_item = get_object_or_404(Cardapio, id=menu_item_id)
-        return Response(menu_item, status=status.HTTP_200_OK)
-    
-@api_view(['PUT'])
-@permission_classes([AllowAny])
-def update_menu_item(request, menu_item_id):
-    if request.method == 'PUT':
-        menu_item = get_object_or_404(Cardapio, id=menu_item_id)
-        data = request.data
-        menu_item.link = data.get('link', menu_item.link)
-        menu_item.save()
-        return Response(menu_item, status=status.HTTP_200_OK)
-
-@api_view(['DELETE'])
-@permission_classes([AllowAny])
-def delete_menu_item(request, menu_item_id):
-    if request.method == 'DELETE':
-        menu_item = get_object_or_404(Cardapio, id=menu_item_id)
-        menu_item.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
