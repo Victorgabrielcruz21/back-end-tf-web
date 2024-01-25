@@ -1,9 +1,9 @@
 import json
 from .models import Usuario
 from .models import Admin
-from .models.Fila import Fila
+from .models import Fila
 from .models import Cardapio
-from .models.Fila import Position
+from .models import Position
 
 from datetime import datetime
 from rest_framework import status
@@ -233,32 +233,46 @@ def delete_cardapio(request, menu_item_id):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def join_queue(request):
+def join_queue(request, queue_id):
     if request.method == 'POST':
         student_id = request.data['student_id']
         student = get_object_or_404(Usuario, ID=student_id)
-        queue = Fila.objects.first() # Supondo que exista apenas uma fila
-        Position.objects.create(aluno=student, fila=queue, posicao=queue.posicao_set.count())
+        queue = get_object_or_404(Fila, id=queue_id) # Busca a fila com base no ID
+        Position.objects.create(aluno=student, fila=queue, posicao=queue.position_set.count())
         return Response(status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def check_position(request):
+def check_position(request, student_id):
     if request.method == 'GET':
-        student_id = request.query_params['student_id']
         student = get_object_or_404(Usuario, ID=student_id)
-        position = Position.objects.get(aluno=student).posicao
-        return Response({'position': position}, status=status.HTTP_200_OK)
+        positions = student.position_set.all().order_by('fila__id')
+        position_dict = {}
+        for position in positions:
+            position_dict[position.fila.id] = {'position': position.posicao, 'queue_id': position.fila.id}
+        return Response(position_dict, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def check_position(request, student_id):
+    if request.method == 'GET':
+        student = get_object_or_404(Usuario, ID=student_id)
+        positions = student.position_set.all().order_by('fila__id')
+        position_dict = {}
+        for position in positions:
+            position_dict[position.fila.id] = position.posicao
+        return Response(position_dict, status=status.HTTP_200_OK)
 
 
 @api_view(['DELETE'])
 @permission_classes([AllowAny])
-def leave_queue(request):
+def leave_queue(request, queue_id):
     if request.method == 'DELETE':
         student_id = request.data['student_id']
         student = get_object_or_404(Usuario, ID=student_id)
-        Position.objects.get(aluno=student).delete()
+        queue = get_object_or_404(Fila, id=queue_id) # Busca a fila com base no ID
+        Position.objects.filter(aluno=student, fila=queue).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
