@@ -23,6 +23,7 @@ from django.shortcuts import get_object_or_404 , redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def usuario_list(request):
